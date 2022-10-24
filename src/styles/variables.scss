@@ -1,0 +1,60 @@
+// base color
+
+$mainBtnColor:#374048;
+$inputBorder:#5D6C79;
+$selectBg:#C1DCF5;
+$selectDefaultFont:#454A50;
+$selectFont:#00ABEB;
+$navBg:#111111;
+$mainColor:#5FE1FF;
+$fontColor:#13171C;
+$imgBg:#D3DADD;
+
+$blue: #324157;
+$gray: #324157;
+$light-blue: #3a71a8;
+$borderBoxColor:#E6E6E6;
+$red: #c03639;
+$pink: #e65d6e;
+$green: #30b08f;
+$tiffany: #4ab7bd;
+$yellow: #fec171;
+$tipsColor:#FF7F01;
+$panGreen: #30b08f;
+$black:#333;
+$bg: #2d3a4b;
+$white:#fff;
+$inputLabel:#9ea1c0;
+// sidebar
+$menuText: #bfcbd9;
+$menuActiveText: #409eff;
+$subMenuActiveText: #f4f4f5;
+
+$menuBg: #304156;
+$menuHover: #263445;
+
+$subMenuBg: #1f2d3d;
+$subMenuHover: #001528;
+
+$sideBarWidth: 210px;
+$titleH:60px;
+$titleColor:#fcfcfc;
+// nprogress
+$progressBg: #20b820;
+
+
+
+:export {
+  blue: $blue;
+  lightBlue: $light-blue;
+  pink: $pink;
+  tiffany: $tiffany;
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  subMenuActiveText: $subMenuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  subMenuBg: $subMenuBg;
+  subMenuHover: $subMenuHover;
+  sideBarWidth: $sideBarWidth;
+}

@@ -1,0 +1,218 @@
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  font-size: 14px;
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+textarea{
+  resize:none !important;
+}
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+a{
+  &:after{
+    display: none;
+  }
+}
+div:focus {
+  outline: none;
+}
+
+blockquote,
+body,
+button,
+caption,
+dd,
+div,
+dl,
+dt,
+fieldset,
+figure,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+html,
+input,
+legend,
+li,
+menu,
+ol,
+p,
+pre,
+table,
+td,
+textarea,
+th,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+
+
+
+::-webkit-scrollbar {
+  width:6px;
+  height: 6px;
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: $mainBtnColor;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #DCDCDC;
+}
+
+.main-btn{
+/*  background: $mainBtnColor;
+  color: #fff;
+  min-width: 140px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 0 20px;*/
+}
+.public-btn{
+  cursor: pointer;
+  &:hover{
+    filter: brightness(1.2);
+  }
+  .btn-text{
+    margin-left: 10px;
+  }
+}
+
+.el-select-dropdown,.el-dropdown-menu{
+  background-color: $selectBg;
+  border: solid 1px $selectBg;
+  color: $selectDefaultFont;
+  .el-select-dropdown__item.hover, .el-select-dropdown__item:hover,.el-dropdown-menu__item:hover{
+    background-color: $selectBg;
+    color: $selectFont;
+  }
+  .el-select-dropdown__item.selected{
+    color: $selectFont;
+  }
+  .popper__arrow{
+    display: none;
+  }
+  .el-dropdown-menu__item--divided:before{
+    background-color: $selectBg;
+  }
+}
+
+.el-popover{
+  background: $selectBg;
+  border: solid 1px $selectBg;
+  .popper__arrow{
+    display: none;
+  }
+}
+
+.el-loading-mask{
+  z-index: 9999 !important;
+}
+
+
+.dialog-btn{
+  width: 100px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  border-radius: 18px;
+
+}
+.dialog-confirm-btn{
+  background: $selectFont;
+  color: #fff;
+  margin-left: 14px;
+}
+.dialog-cancel-btn{
+  background: #D3DADD;
+  color:$fontColor ;
+}
+.el-image{
+  object-fit: contain;
+}
+.el-image__inner{
+  width: initial;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 16px;
+  height: auto;
+}
+
+
+.no-data{
+
+  width: 100%;
+  margin-top: 30px;
+  color: #fff;
+  text-align:center;
+}
+.el-message{
+  z-index: 9999 !important;
+}
+.el-select{
+  width: 100%;
+}
