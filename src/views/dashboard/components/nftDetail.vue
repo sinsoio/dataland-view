@@ -192,7 +192,9 @@
               type="primary"
               :loading="state"
               class="public-btn dialog-btn dialog-confirm-btn"
-              @click="transfer(obj.nftContract, obj.targetAddress, obj.id)"
+              @click="
+                transfer(obj.nftContract, obj.targetAddress, obj.id, obj.chain)
+              "
             >
               Confirm
             </el-button>
@@ -245,8 +247,32 @@ export default {
         attributes: [],
         manuallyClick: false,
         created: false,
-        favorited: true
-      }
+        favorited: true,
+        chainId: 0
+      },
+      blockchains: [
+        {
+          chainId: 8845,
+          label: 'Sinso',
+          rpcUrl: 'https://data-seed-pressc-1.sinso.io',
+          currency: 'SINSO',
+          icon: require('../../../assets/sinso_getway.png')
+        },
+        {
+          chainId: 1,
+          label: 'Ethereum ',
+          rpcUrl: 'https://mainnet.infura.io/v3/',
+          currency: 'ETH',
+          icon: require('../../../assets/Ethereum.png')
+        },
+        {
+          chainId: 137,
+          label: 'Polygon',
+          rpcUrl: 'https://polygon-rpc.com',
+          currency: 'MATIC',
+          icon: require('../../../assets/Polygon.png')
+        }
+      ]
     }
   },
   computed: {
@@ -291,9 +317,28 @@ export default {
       this.$refs.publicDialog.close()
     },
 
-    async transfer(contractAddress, targetAddress, nftId) {
+    async switchChain(chainId) {
+      let defaultChainId = Web3.utils.numberToHex(chainId)
+      return await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: defaultChainId }]
+      })
+    },
+
+    async transfer(contractAddress, targetAddress, nftId, chain) {
       let rpcUrl = this.$store.state.user.chainCh
       let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
+
+
+      this.blockchains.forEach((element) => {
+        if (element.currency == chain) {
+          this.chainId = element.chainId
+        }
+      })
+
+      await this.switchChain(this.chainId)
+
+      // return
 
       // Instantiate a new contract object
       const instance = new web3.eth.Contract(
@@ -328,7 +373,6 @@ export default {
           })
         })
         .catch(function (error) {
-          console.log(error)
         })
     }
   }

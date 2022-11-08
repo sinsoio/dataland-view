@@ -1,16 +1,16 @@
 <template>
   <div class="errPage-container">
     <el-button icon="arrow-left" class="pan-back-btn" @click="back">
-      返回
+      return
     </el-button>
     <el-row>
       <el-col :span="12">
         <h1 class="text-jumbo text-ginormous">Oops!</h1>
-        <h4 class="text-tips">你要找你的页面不见啦 ...</h4>
+        <h4 class="text-tips">The page you are looking for is missing ...</h4>
         <ul class="list-unstyled">
-          <li>你可以选择去:</li>
+          <li>You can choose to go:</li>
           <li class="link-type">
-            <router-link to="/"> 回首页 </router-link>
+            <router-link to="/"> go Home </router-link>
           </li>
         </ul>
       </el-col>

@@ -219,7 +219,6 @@ export default {
 
     openDialog() {
       var flag = Web3.utils.isAddress(this.targetAddress)
-      console.log(flag)
 
       if (!flag) {
         this.$message({
@@ -366,7 +365,7 @@ export default {
             message: 'Loading model Error',
             type: 'error'
           })
-          console.log('Loading model Error')
+          // console.log('Loading model Error')
         }
       )
 

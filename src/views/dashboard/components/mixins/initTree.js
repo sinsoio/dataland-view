@@ -123,7 +123,7 @@ export default {
             message: 'Loading model Error',
             type: 'error'
           })
-          console.log('Loading model Error')
+          // console.log('Loading model Error')
         }
       )
 
