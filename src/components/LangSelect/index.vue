@@ -43,7 +43,6 @@ export default {
       }).then(function (response) {
         that.$store.dispatch('app/setLanguageBackstage', response.data)
       }).catch(function (error) {
-        console.log(error)
       })
       this.$store.dispatch('app/setLanguage', lang)
     }

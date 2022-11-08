@@ -1,5 +1,5 @@
 import router from './index'
-import {getToken} from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from '@/store'
@@ -9,27 +9,22 @@ NProgress.configure({
   showSpinner: false
 })
 
-const whiteList = ['/dashboard']
+const whiteList = ['/login']
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  document.title = i18n.t(`route.${to.meta.title}`);
+  document.title = i18n.t(`route.${to.meta.title}`)
 
-    if (getToken()) { // determine if there has token
-      /* has token*/
+  if (getToken()) {
+    // determine if there has token
+    /* has token*/
+    next()
+  } else {
+    if (whiteList.indexOf(to.path) !== -1) {
       next()
-    }else{
-
-      if (whiteList.indexOf(to.path) !== -1) {
-        next();
-
-
-      } else {
-
-        next({path: '/dashboard'})
-
-      }
+    } else {
+      next('/login')
     }
-
+  }
 })
 
 router.afterEach(() => {

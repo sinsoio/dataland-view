@@ -23,6 +23,7 @@
             :show-file-list="false"
             :on-change="handleChange"
             :auto-upload="false"
+            :disabled="!!form.fileUri"
           >
             <div class="chooseImage upload-content-box">
               <img
@@ -40,7 +41,7 @@
                 class="video"
                 v-else-if="fileType == 2"
                 :src="form.fileUri"
-                auto
+                autoplay
                 loop
                 controls="controls"
                 controlslist="nodownload  noplaybackrate noremoteplayback"
@@ -53,12 +54,45 @@
                 v-else-if="fileType == 3"
                 style="width: 250px; height: 250px"
               />
+
+              <div v-else-if="fileType == 4">
+                <img
+                  src="@/assets/img-mp3-bg.png"
+                  alt=""
+                  width="250px"
+                  height="210px"
+                />
+
+                <video
+                  class="video"
+                  :src="form.fileUri"
+                  autoplay
+                  loop
+                  controls="controls"
+                  controlslist="nodownload  noplaybackrate noremoteplayback"
+                  :disablePictureInPicture="true"
+                  style="width: 280px; height: 40px"
+                ></video>
+              </div>
+
+              <div v-if="form.fileUri" class="reload-box" @click="reload">
+                <img src="@/assets/img-change.png" alt=""  width="30px"/>
+              </div>
+
+              <!-- <el-button  v-if="form.fileUri" class="reload-box" type="mini" @click="reload" round
+                >reload</el-button
+              > -->
             </div>
           </el-upload>
+
+          <!-- <div class="reload-box" v-if="form.fileUri" style="margin-top:10px">  -->
+          <!-- <el-button class="reload-box" type="mini"  @click="reload" round>reload</el-button> -->
+          <!-- </div> -->
+
           <div class="tips">
             <div class="tips-content">
               <p>Image：jpg、jpeg、gif、png</p>
-              <p>Video：mp4、avi</p>
+              <p>Video：mp3、mp4、avi</p>
               <p>3DModel：glb</p>
               <p>Less than 100m</p>
             </div>
@@ -68,7 +102,7 @@
         <el-form-item label="Block chain:">
           <el-select v-model="form.chainId" @change="changeChain">
             <el-option
-              v-for="(item, index) in blockchains"
+              v-for="item in blockchains"
               :key="item.chainId"
               :label="item.label"
               :value="item.chainId"
@@ -173,7 +207,17 @@ export default {
       imageUrl: '',
       logUrl: '',
 
-      fileTypes: ['png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'glb', 'gltf'],
+      fileTypes: [
+        'png',
+        'jpg',
+        'jpeg',
+        'gif',
+        'mp3',
+        'mp4',
+        'avi',
+        'glb',
+        'gltf'
+      ],
       form: {
         nftName: '',
         fileUri: '',
@@ -242,7 +286,6 @@ export default {
   },
   mounted() {},
   watch: {
-    //
     stateObj: {
       handler() {
         let { status1, status2, status3, status4 } = this.stateObj
@@ -262,6 +305,10 @@ export default {
         status3: 1,
         status4: 1
       }
+    },
+
+    reload() {
+      this.form.fileUri = ''
     },
     // mint nft
     async saveNft(file) {
@@ -295,9 +342,8 @@ export default {
           this.imageUrl = res.url
           this.contentType =
             this.fileType == 3 ? 'model/gltf-binary' : res.contentType
-
           let json
-          if (this.fileType == 1 || this.fileType == 3) {
+          if (this.fileType == 1 || this.fileType == 3 || this.fileType == 4) {
             json = {
               jsonStr: JSON.stringify({
                 name: this.nftName,
@@ -317,6 +363,7 @@ export default {
               nftId: '0'
             }
           }
+
           this.uploadJson(json)
 
           let web3 = new Web3(
@@ -343,6 +390,7 @@ export default {
         }
       })
     },
+
     async saveNftWay(trx) {
       var time = new Date().getTime()
       let obj = {
@@ -381,6 +429,7 @@ export default {
           arguments: args
         })
         .encodeABI()
+
       let transactionObject = {
         from: this.address,
         gas: '400000',
@@ -622,6 +671,8 @@ export default {
         this.$nextTick(() => {
           this.initThree(this.form.fileUri)
         })
+      } else if (file.raw.type.indexOf('audio') > -1) {
+        this.fileType = 4
       }
     },
 
@@ -707,12 +758,27 @@ export default {
     width: 250px;
     height: 250px;
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
     ::v-deep .el-image {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .reload-box {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 40px;
+      height: 40px;
+      background: #000000;
+      opacity: 0.5;
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }

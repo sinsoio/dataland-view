@@ -178,4 +178,7 @@ export default {
     margin-right: 14px;
   }
 }
+
+
+
 </style>

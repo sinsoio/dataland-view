@@ -174,11 +174,12 @@
             </div>
           </div>
         </div>
-        <div class="bottom-box">
+        <div class="bottom-box" id="contList">
           <list
             ref="list"
             :layoutActive="layoutActive"
             :fileList="fileList"
+            :isCollapse="isCollapse"
             @openDialog="openDialog"
             @nextFolder="nextFolder"
             @loadMore="loadMore"
@@ -188,14 +189,20 @@
         </div>
       </div>
     </div>
-    <remove-dialog
-      ref="removeDialog"
+
+    <transfer-dialog
+      ref="transferDialog"
+      @openDialog="openDialog"
       @confirmCallback="confirmCallback"
-    ></remove-dialog>
+    ></transfer-dialog>
     <rename-dialog
       ref="renameDialog"
       @confirmCallback="confirmCallback"
     ></rename-dialog>
+    <remove-dialog
+      ref="removeDialog"
+      @confirmCallback="confirmCallback"
+    ></remove-dialog>
     <add-n-f-t
       ref="addNFT"
       :parent-id="parentId"
@@ -221,6 +228,7 @@ import List from './components/list'
 import { mapGetters } from 'vuex'
 import RemoveDialog from '@/views/dashboard/components/removeDialog'
 import RenameDialog from '@/views/dashboard/components/renameDialog'
+import TransferDialog from '@/views/dashboard/components/transferDialog'
 import AddNFT from '@/views/dashboard/components/addNFT'
 import CreateFolder from '@/views/dashboard/components/createFolder'
 import MoveTo from '@/views/dashboard/components/moveTo'
@@ -234,6 +242,7 @@ export default {
     List,
     RemoveDialog,
     RenameDialog,
+    TransferDialog,
     AddNFT,
     CreateFolder,
     MoveTo,
@@ -419,7 +428,10 @@ export default {
      * @param concat  data is connected
      */
     getFile(txt, parentId, concat) {
-      this.$Loading.loadingShow()
+      if (this.pageNum == 1) {
+        this.$Loading.loadingShow()
+      }
+
       this.statistics()
       if (txt.length > 0) {
         this.getFolder({ searchMsg: txt }, concat)

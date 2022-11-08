@@ -5,7 +5,8 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 const state = {
   token: getToken(),
 
-  address: localStorage.getItem('address') || ''
+  address: localStorage.getItem('address') || '',
+  chainCh: ''
 }
 const mutations = {
   SET_ADDRESS: (state, address) => {
@@ -15,13 +16,18 @@ const mutations = {
 
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_CHAINCH: (state, token) => {
+    state.chainCh = token
   }
 }
 const actions = {
   setAddress({ commit }, value) {
     commit('SET_ADDRESS', value)
   },
-
+  setChainCh({ commit }, value) {
+    commit('SET_CHAINCH', value)
+  },
   setInfo({ commit }, data) {
     return new Promise((resolve, reject) => {
       $login(data)

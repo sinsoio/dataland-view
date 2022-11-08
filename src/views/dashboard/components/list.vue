@@ -1,25 +1,36 @@
 <template>
   <ul
     class="content-list"
+    :class="{
+      ehFQXR: !isCollapse && layoutActive,
+      beNxio: isCollapse && layoutActive,
+      iDCpHK: !isCollapse && !layoutActive,
+      iUpbyz: isCollapse && !layoutActive
+    }"
     v-infinite-scroll="loadMore"
     infinite-scroll-distance="1"
     style="overflow-y: auto"
     infinite-scroll-disabled="busy"
   >
-    <li
-      :class="layoutActive ? '' : 'list-item-small'"
-      class="list-item"
-      v-for="(item, index) in listData"
-      :key="index"
-    >
+    <!--       :class="layoutActive ? '' : 'list-item-small'" -->
+    <li class="list-item" v-for="(item, index) in listData" :key="index">
       <div
         class="item-box"
         @click="
           item.type === 1 ? nextFolder(item) : openDialog(item, 'nftDetail')
         "
       >
-        <div class="item-img">
+        <div class="item-img" :class="!layoutActive && 'item-mar'">
           <img v-if="item.type == 1" src="@/assets/img-file1.png" />
+
+          <!-- <img
+            v-else-if="item.nftFormat.indexOf('audio') > -1"
+            src="@/assets/img-mp3-bg.png"
+            fit="contain"
+            class="img"
+            width="160px"
+          /> -->
+
           <el-image v-else :src="item.logo" fit="contain" class="img">
             <div slot="placeholder" class="img-placeholder">
               <img :src="imgArr[item.nftFormat]" />
@@ -60,11 +71,19 @@
                   @click.native="openDialog(item, 'moveTo', index)"
                   >Move to
                 </el-dropdown-item>
-                <el-dropdown-item
+                <!-- <el-dropdown-item
                   @click.native="addToSinso(item.id, index)"
                   v-if="!item.manuallyClick && item.type === 2"
                   >Store on SINSO
+                </el-dropdown-item> -->
+
+                <el-dropdown-item
+                  v-if="item.collected && item.type === 2"
+                  @click.native="openDialog(item, 'transferDialog', index)"
+                >
+                  Transfer
                 </el-dropdown-item>
+
                 <el-dropdown-item
                   @click.native="openDialog(item, 'removeDialog', index)"
                   >Remove
@@ -112,6 +131,11 @@ export default {
       type: Array,
       require: true,
       default: () => []
+    },
+    isCollapse: {
+      type: Boolean,
+      require: false,
+      default: () => []
     }
   },
   data() {
@@ -124,14 +148,16 @@ export default {
         ETH: require('@/assets/Ethereum.png'),
         MATIC: require('@/assets/Polygon.png'),
         'video/mp4': require('@/assets/img-video.png')
-      }, //
+      },
       listData: []
     }
   },
+
   watch: {
     fileList(val) {
       this.listData = val
-    }
+    },
+    isCollapse() {}
   },
   created() {},
   methods: {
@@ -170,29 +196,179 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.beNxio {
+  --template-column-gutters: 16px;
+  --template-columns: 1;
+  --template-column-compact-multiplier: 1;
+  --template-reduced-columns: 0;
+  --template-reduced-columns-multiplier: 2;
+}
+.ehFQXR {
+  --template-column-gutters: 16px;
+  --template-columns: 1;
+  --template-column-compact-multiplier: 1;
+  --template-reduced-columns: 0;
+  --template-reduced-columns-multiplier: 2;
+}
+.iDCpHK,
+.iUpbyz {
+  --template-column-gutters: 16px;
+  --template-columns: 1;
+  --template-column-compact-multiplier: 1;
+  --template-reduced-columns: 0;
+  --template-reduced-columns-multiplier: 1;
+}
+@media (min-width: 1024px) {
+  .beNxio,
+  .iUpbyz {
+    --template-reduced-columns: 1;
+  }
+  .ehFQXR,
+  .iDCpHK {
+    --template-reduced-columns: 0;
+    --template-columns: 5;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 3;
+  }
+  .iDCpHK {
+    --template-reduced-columns: 0;
+  }
+}
+@media (min-width: 768px) {
+  .beNxio,
+  .ehFQXR,
+  .iDCpHK,
+  .iUpbyz {
+    --template-column-gutters: 16px;
+  }
+}
+
+@media (min-width: 20rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 2;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 2;
+  }
+}
+@media (min-width: 30rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 3;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 3;
+  }
+}
+@media (min-width: 50rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 4;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 4;
+  }
+}
+@media (min-width: 60rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 5;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 5;
+  }
+}
+@media (min-width: 70rem) {
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 4;
+    .item-img {
+      height: 300px !important;
+    }
+  }
+}
+@media (min-width: 80rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 6;
+  }
+}
+@media (min-width: 90rem) {
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 7;
+  }
+  .iDCpHK,
+  .iUpbyz {
+    --template-columns: 5;
+    .item-img {
+      height: 250px !important;
+    }
+  }
+}
+@media (min-width: 110rem) {
+  .iUpbyz {
+    --template-columns: 6;
+  }
+  .iUpbyz {
+    --template-columns: 5;
+  }
+}
+@media (min-width: 120rem) {
+  .iDCpHK {
+    --template-columns: 7;
+  }
+  .iUpbyz {
+    --template-columns: 6;
+  }
+  .beNxio,
+  .ehFQXR {
+    --template-columns: 9;
+  }
+}
+
 .content-list {
-  flex: 1;
-  padding: 12px 7px 15px 7px;
+  // flex: 1;
+  padding: 12px 15px 15px 7px;
   overflow: auto;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-content: flex-start;
+  // display: flex;
+  // flex-wrap: wrap;
+  // justify-content: flex-start;
+  // align-content: flex-start;
+  display: grid;
+  grid-auto-rows: minmax(1fr, 3.41fr);
+  grid-template-columns: repeat(
+    calc(
+      var(--template-columns) -
+        (
+          var(--template-reduced-columns) *
+            var(--template-reduced-columns-multiplier)
+        )
+    ),
+    minmax(0, 1fr)
+  );
+  // gap: var(--template-column-gutters);
+  gap: 24px;
   text-align: justify;
   .list-item {
     display: inline-block;
-    //float:left ;
-    margin: 17px 15px 17px 15px;
-    width: 200px;
-    //width: 276px;
+    margin: 17px 0px 17px 0px;
+    // width: 200px;
+    height: 100%;
     transition: all 1s;
     .item-box {
       width: 100%;
-      //height: 320px;
 
-      height: 235px;
+      // height: 235px;
       cursor: pointer;
       background: linear-gradient(
         0deg,
@@ -207,14 +383,10 @@ export default {
         transform: scale(1.1);
       }
 
-      //padding: 24px;
-
       .item-img {
         transition: all 1s;
-        width: 160px;
+        // width: 160px;
         height: 160px;
-
-        /* background: red;*/
         display: flex;
         justify-content: center;
         align-items: center;
@@ -232,19 +404,24 @@ export default {
           object-fit: contain;
         }
       }
+      .item-mar {
+        height: 210px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
 
       .item-bottom {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 20px;
+        margin-top: 10px;
         height: 40px;
 
         .item-icon {
           img {
-            height: 16px;
+            height: 14px;
             display: inline-block;
-            margin-right: 8px;
+            margin-right: 6px;
           }
         }
 
@@ -299,7 +476,7 @@ export default {
       height: 320px;
       padding: 24px;
       .item-img {
-        width: 228px;
+        // width: 228px;
         height: 228px;
       }
     }
@@ -312,6 +489,18 @@ export default {
   .list-item-none {
     height: 0 !important;
     margin: 0 17px !important;
+  }
+}
+#contList {
+  .iDCpHK,
+  .iUpbyz {
+    .item-icon {
+      img {
+        height: 16px;
+        display: inline-block;
+        margin-right: 8px;
+      }
+    }
   }
 }
 </style>

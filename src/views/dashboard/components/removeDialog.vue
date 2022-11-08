@@ -72,9 +72,7 @@ export default {
       }
       this.$emit('confirmCallback',{name:'remove',data:{backData,type:this.type}})
       this.$refs.publicDialog.close();
-
     }
-
   }
 
 }

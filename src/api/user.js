@@ -152,3 +152,12 @@ export function $getDetail(params) {
     params
   })
 }
+
+
+export function $transferNFT(data) {
+  return fetch({
+    url: '/data/file/transfer_nft',
+    method: 'post',
+    data
+  })
+}

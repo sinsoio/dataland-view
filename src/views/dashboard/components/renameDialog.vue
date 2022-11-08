@@ -38,7 +38,6 @@ export default {
       formRules: {
         folderName: [{ required: true, max: 50, message: 'Incorrect Input', trigger: 'blur' }]
       }
-
     }
   },
   methods: {

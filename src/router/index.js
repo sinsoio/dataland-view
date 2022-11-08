@@ -4,10 +4,6 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 const routes = [
-
-
-
-
   {
     path: '/',
     name: 'layout',
@@ -17,16 +13,18 @@ const routes = [
       {
         path: '/dashboard',
         name: 'Dashboard',
-        meta:{
-          title:'dashboard',
-          icon:'home',
-          index:'dashboard'
+        meta: {
+          title: 'dashboard',
+          icon: 'home',
+          index: 'dashboard'
         },
         component: () => import('@/views/dashboard')
-      },
-
-
+      }
     ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login.vue')
   },
   {
     path: '/404',

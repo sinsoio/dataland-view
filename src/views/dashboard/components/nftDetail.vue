@@ -31,13 +31,36 @@
               <video
                 v-if="nftDetail.nftFormat.indexOf('video') > -1"
                 :src="nftDetail.imageUrl"
-                auto
+                autoplay
                 loop
                 controls="controls"
                 controlslist="nodownload  noplaybackrate noremoteplayback"
                 :disablePictureInPicture="true"
                 style="width: 470px; height: 470px"
               ></video>
+
+              <div v-else-if="nftDetail.nftFormat.indexOf('audio') > -1">
+                <img
+                  src="@/assets/img-mp3-bg.png"
+                  alt=""
+                  width="470px"
+                  height="420px"
+                />
+
+                <div>
+                  <video
+                    class="video"
+                    :src="nftDetail.imageUrl"
+                    autoplay
+                    loop
+                    controls="controls"
+                    controlslist="nodownload  noplaybackrate noremoteplayback"
+                    :disablePictureInPicture="true"
+                    style="width: 470px; height: 50px"
+                  ></video>
+                </div>
+              </div>
+
               <el-image
                 ref="previewImage"
                 v-else-if="
@@ -45,6 +68,7 @@
                   nftDetail.nftFormat.indexOf('unknown') > -1
                 "
                 :src="nftDetail.imageUrl"
+                :preview-src-list="[nftDetail.imageUrl]"
                 fit="contain"
                 style="width: 470px; height: 470px"
               >
@@ -56,13 +80,19 @@
                   <img src="@/assets/img-zhanwei.png" />
                 </div>
               </el-image>
-
-              <div
-                id="ThreeContainer"
-                v-else
-                style="width: 470px; height: 470px"
-              />
+              <div v-else>
+                <div
+                  id="ThreeContainer"
+                  style="width: 470px; height: 460px"
+                ></div>
+                <div class="speed" v-if="percentage > 1 || percentage < 100">
+                  <div class="speIng" :style="`width:${percentage}%`">
+                    <p><i></i></p>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div class="info-icon">
               <img :src="imgArr[nftDetail.chain]" />
               <img v-if="nftDetail.created" src="@/assets/img-Created.png" />
@@ -129,11 +159,17 @@
             </div>
           </div>
         </el-skeleton>
+
         <transition name="fade">
           <div class="info-bottom" v-show="nftDetail.attributes.length > 0">
             <div class="info-bottom-title">Properties</div>
             <div class="info-bottom-content">
-              <div class="item" v-for="(item, index) in nftDetail.attributes">
+              <div
+                class="item"
+                v-for="(item, index) in nftDetail.attributes"
+                :key="index"
+                :class="(index + 1) % 5 != 0 && 'info-mar'"
+              >
                 <div class="item-title">{{ item.attribute_name }}</div>
                 <div class="item-content">
                   <p class="name" :title="item.attribute_value">
@@ -142,8 +178,24 @@
                   <p class="value">{{ item.percentage }} have this Trait</p>
                 </div>
               </div>
-              <div class="no-item" v-for="item in 4"></div>
+              <!-- <div class="no-item" v-for="item in 4"></div> -->
             </div>
+          </div>
+        </transition>
+
+        <transition name="fade" v-if="obj.isShowTransferInfo">
+          <div class="info-bottom">
+            <div class="info-bottom-title">Transfer</div>
+            <div>Transfer this nft to : {{ obj.targetAddress }}</div>
+
+            <el-button
+              type="primary"
+              :loading="state"
+              class="public-btn dialog-btn dialog-confirm-btn"
+              @click="transfer(obj.nftContract, obj.targetAddress, obj.id)"
+            >
+              Confirm
+            </el-button>
           </div>
         </transition>
       </template>
@@ -154,8 +206,11 @@
 <script>
 import PublicDialog from '@/components/PublicDialog'
 import imgArr from './mixins/imgArr'
-import { $getDetail } from '@/api/user'
+import { $getDetail, $transferNFT } from '@/api/user'
 import initTree from './mixins/initTree'
+import Web3 from 'web3'
+import DatalandNFTContractsJson from '@/assets/contracts/DatalandNFT'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'nftDetail',
@@ -165,8 +220,11 @@ export default {
   },
   data() {
     return {
+      obj: {},
+      percentage: 0,
       dialogTitle: 'Rename Folder',
       loading: true,
+      state: false,
       nftDetail: {
         nftName: 'Mutant Okay Azukis #0',
         nftStanderd: 'erc721',
@@ -191,11 +249,18 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['address'])
+  },
   methods: {
     open(obj) {
+      this.obj = obj
+
       this.getDetail(obj.id)
+      this.percentage = 0
       this.$refs.publicDialog.open()
     },
+
     getDetail(id) {
       $getDetail({ id })
         .then((res) => {
@@ -222,7 +287,49 @@ export default {
       this.nftDetail.attributes = [] // Clear attribute list when pop up box is closed
     },
     confirmFun() {
+      this.percentage = 0
       this.$refs.publicDialog.close()
+    },
+
+    async transfer(contractAddress, targetAddress, nftId) {
+      let rpcUrl = this.$store.state.user.chainCh
+      let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
+
+      // Instantiate a new contract object
+      const instance = new web3.eth.Contract(
+        DatalandNFTContractsJson.abi,
+        contractAddress
+      )
+
+      var encode = instance.methods
+        .safeTransferFrom(
+          this.address, // from
+          targetAddress, // to target address 0x3C93b6a955167bA7d36472123EB3D25e82633eA0
+          0 // tokenId
+        )
+        .encodeABI()
+
+      // create transfer object
+      let transactionObject = {
+        from: this.address,
+        to: contractAddress,
+        gas: '400000',
+        data: encode
+      }
+      return await window.ethereum
+        .request({
+          method: 'eth_sendTransaction',
+          params: [transactionObject]
+        })
+        .then(function (receipt) {
+          console.log(receipt)
+          $transferNFT({ id: nftId, toAddress: targetAddress }).then(() => {
+            window.location.reload()
+          })
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     }
   }
 }
@@ -248,6 +355,13 @@ export default {
   .el-skeleton__image svg {
     fill: #9b9b9b;
   }
+}
+
+.dialog-confirm-btn {
+  margin: 5px auto;
+  line-height: 1;
+  display: block;
+  width: auto;
 }
 
 .base-info {
@@ -329,7 +443,7 @@ export default {
   .info-bottom-content {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    // justify-content: space-between;
 
     .item {
       color: #fff;
@@ -368,7 +482,9 @@ export default {
         }
       }
     }
-
+    .info-mar {
+      margin-right: 20px;
+    }
     .no-item {
       width: 188px;
       height: 0;
@@ -382,5 +498,39 @@ export default {
 
 ::v-deep .el-dialog__close {
   color: #000 !important;
+}
+
+.speed {
+  width: 470px;
+  height: 4px;
+  background-color: #a4b9d4;
+  position: relative;
+  border-radius: 20px;
+  margin: 4px 0px;
+  .speIng {
+    position: absolute;
+    height: 4px;
+    background-color: #06a4ee;
+    border-radius: 20px;
+    > p {
+      width: 6px;
+      height: 6px;
+      background-color: #06a4ee;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      > i {
+        display: block;
+        width: 4px;
+        height: 4px;
+        background-color: #ffffff;
+        border-radius: 50%;
+      }
+    }
+  }
 }
 </style>
